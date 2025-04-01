@@ -60,7 +60,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "right":
-			if m.pos.x < len(m.board.m) {
+			if m.pos.x < len(m.board.m)-1 {
 				m.pos.x++
 			}
 
