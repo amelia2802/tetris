@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -310,8 +311,8 @@ var gamePieces = []piece{
 
 // pickPiece returns a random piece for the game.
 func pickPiece() *piece {
-	// rnd := rand.Intn(len(gamePieces))
-	picked := gamePieces[1]
+	rnd := rand.Intn(len(gamePieces))
+	picked := gamePieces[rnd]
 
 	p := &piece{}
 	for _, pp := range picked.points {
