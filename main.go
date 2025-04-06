@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 	"slices"
 
@@ -24,6 +23,7 @@ var currentPiece = pickPiece()
 // piece is a game piece that can be moved across the board until it is
 // emprinted which then becomes part of the board.
 type piece struct {
+	id     string
 	points []*point
 }
 
@@ -225,6 +225,9 @@ func (b *board) removeFillRows() {
 	// Remove the row i and insert a new, empty one on the top.
 	for _, i := range rowsDel {
 		b.m = append(b.m[:i], b.m[i:]...)
+	}
+
+	for _, i := range rowsDel {
 		b.m = slices.Insert(b.m, 0, make([]int, len(b.m[i])))
 	}
 
@@ -274,35 +277,42 @@ func (m model) View() string {
 // gamePieces defines the possible pieces that the game can show.
 var gamePieces = []piece{
 	{
+		id: "1",
 		// ----
 		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}},
 	},
 	{
+		id: "2",
 		// --
 		// --
 		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}},
 	},
 	{
+		id: "3",
 		//  --
 		// --
 		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}},
 	},
 	{
+		id: "4",
 		//  -
 		// ---
 		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 1}},
 	},
 	{
+		id: "5",
 		// -
 		// ---
 		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 0}},
 	},
 	{
+		id: "6",
 		//   -
 		// ---
 		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 2}},
 	},
 	{
+		id: "7",
 		// --
 		//  --
 		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}},
@@ -311,8 +321,8 @@ var gamePieces = []piece{
 
 // pickPiece returns a random piece for the game.
 func pickPiece() *piece {
-	rnd := rand.Intn(len(gamePieces))
-	picked := gamePieces[rnd]
+	// rnd := rand.Intn(len(gamePieces))
+	picked := gamePieces[1]
 
 	p := &piece{}
 	for _, pp := range picked.points {
