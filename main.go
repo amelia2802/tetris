@@ -66,9 +66,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
-			if m.pos.y < len(m.board.m)-1 {
+			if m.pos.y+1 < len(m.board.m) && m.board.m[m.pos.y+1][m.pos.x] != 1 {
 				m.pos.y++
+				break
 			}
+
+			m.board.m[m.pos.y][m.pos.x] = 1
+			m.pos = point{}
+
+			// if m.pos.y < len(m.board.m) {
+			// 	if m.board.m[m.pos.y+1][m.pos.x] == 1 || m.pos.y+1 == len(m.board.m)-1 {
+			// 		m.board.m[m.pos.y+1][m.pos.x] = 1
+			// 		m.pos = point{}
+			// 	} else {
+			// 		m.pos.y++
+			// 	}
+			// }
 		}
 	}
 
@@ -81,6 +94,17 @@ type board struct {
 	m [][]int
 }
 
+func (b *board) P(y, x int) string {
+	v := b.m[y][y]
+
+	if v == 0 {
+		return "0"
+	}
+
+	return "1"
+}
+
+// initBoard creates an empty board.
 func initBoard() *board {
 	b := &board{
 		m: make([][]int, 0),
@@ -100,13 +124,16 @@ func initBoard() *board {
 func (m model) View() string {
 	var board string
 
-	for i := 0; i < 33; i++ {
+	// for i := range len(m.board.m) {
+	// 	board += fmt.Sprintf("%v\n", m.board.m[i])
+	// }
+	for i := range 33 {
 		var row string
-		for j := 0; j < 16; j++ {
+		for j := range 16 {
 			if i == m.pos.y && j == m.pos.x {
 				row += "1"
 			} else {
-				row += "0"
+				row += fmt.Sprintf("%v", m.board.m[i][j])
 			}
 		}
 		board += row + "\n"
