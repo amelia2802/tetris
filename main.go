@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -193,14 +194,39 @@ type board struct {
 
 // emprint writes 1' in the board as the points indicate.
 func (b *board) emprint(piece piece) bool {
-	if !piece.canMoveDown(*b) {
-		for _, p := range piece.points {
-			b.m[p.x][p.y] = 1
+	if piece.canMoveDown(*b) {
+		return false
+	}
+
+	for _, p := range piece.points {
+		b.m[p.x][p.y] = 1
+	}
+
+	b.removeFillRows()
+
+	return true
+}
+
+func (b *board) removeFillRows() {
+	var rowsDel []int
+
+	for i := len(b.m) - 1; i > 0; i-- {
+		var sum int
+		for _, j := range b.m[i] {
+			sum += j
 		}
 
-		return true
+		if sum == len(b.m[i]) { // the entire row is filled.
+			rowsDel = append(rowsDel, i)
+		}
 	}
-	return false
+
+	// Remove the row i and insert a new, empty one on the top.
+	for _, i := range rowsDel {
+		b.m = append(b.m[:i], b.m[i:]...)
+		b.m = slices.Insert(b.m, 0, make([]int, len(b.m[i])))
+	}
+
 }
 
 // initBoard creates an empty board.
