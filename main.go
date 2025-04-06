@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"slices"
 
@@ -310,7 +311,8 @@ var gamePieces = []piece{
 
 // pickPiece returns a random piece for the game.
 func pickPiece() *piece {
-	picked := gamePieces[6]
+	rnd := rand.Intn(len(gamePieces))
+	picked := gamePieces[rnd]
 
 	p := &piece{}
 	for _, pp := range picked.points {
