@@ -291,11 +291,26 @@ var gamePieces = []piece{
 		// ---
 		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 1}},
 	},
+	{
+		// -
+		// ---
+		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 0}},
+	},
+	{
+		//   -
+		// ---
+		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 2}},
+	},
+	{
+		// --
+		//  --
+		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}},
+	},
 }
 
 // pickPiece returns a random piece for the game.
 func pickPiece() *piece {
-	picked := gamePieces[3]
+	picked := gamePieces[6]
 
 	p := &piece{}
 	for _, pp := range picked.points {
