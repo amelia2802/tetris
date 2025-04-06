@@ -37,9 +37,43 @@ func (p *piece) canMoveDown(b board) bool {
 	return true
 }
 
+// canMoveRight returns true if the piece can be moved right based on the
+// curretn configuration of the board.
+func (p *piece) canMoveRight(b board) bool {
+	for _, point := range p.points {
+		if !point.canMoveRight(b) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (p *piece) canMoveLeft(b board) bool {
+	for _, point := range p.points {
+		if !point.canMoveLeft(b) {
+			return false
+		}
+	}
+
+	return true
+}
+
 func (p *piece) moveDown() {
 	for _, point := range p.points {
 		point.x++
+	}
+}
+
+func (p *piece) moveRight() {
+	for _, point := range p.points {
+		point.y++
+	}
+}
+
+func (p *piece) moveLeft() {
+	for _, point := range p.points {
+		point.y--
 	}
 }
 
@@ -79,6 +113,22 @@ func (p point) canMoveDown(b board) bool {
 	return false
 }
 
+func (p *point) canMoveRight(b board) bool {
+	if p.y+1 < len(b.m[0]) && b.m[p.x][p.y+1] != 1 { // Move right allowed.
+		return true
+	}
+
+	return false
+}
+
+func (p *point) canMoveLeft(b board) bool {
+	if p.y > 0 && b.m[p.x][p.y-1] != 1 { // Move left is allowed.
+		return true
+	}
+
+	return false
+}
+
 type model struct {
 	board *board
 }
@@ -111,14 +161,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "up", "k":
 
 		case "left":
-			// if m.pos.x > 0 {
-			// 	m.pos.x--
-			// }
+			if currentPiece.canMoveLeft(*m.board) {
+				currentPiece.moveLeft()
+			}
 
 		case "right":
-			// if m.pos.x < len(m.board.m)-1 {
-			// 	m.pos.x++
-			// }
+			if currentPiece.canMoveRight(*m.board) {
+				currentPiece.moveRight()
+			}
 
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
@@ -129,14 +179,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.board.emprint(*currentPiece) {
 				currentPiece = pickPiece()
 			}
-
-			// if m.pos.y+1 < len(m.board.m) && m.board.m[m.pos.y+1][m.pos.x] != 1 {
-			// 	m.pos.y++
-			// 	break
-			// }
-
-			// m.board.m[m.pos.y][m.pos.x] = 1
-			// m.pos = point{}
 		}
 	}
 
