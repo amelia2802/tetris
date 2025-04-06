@@ -17,6 +17,8 @@ func main() {
 	}
 }
 
+var currentPiece = pickPiece()
+
 // piece is a game piece that can be moved across the board until it is
 // emprinted which then becomes part of the board.
 type piece struct {
@@ -51,6 +53,10 @@ func (p *piece) isIn(point point) bool {
 	return false
 }
 
+func (p *piece) String() string {
+	return fmt.Sprintf("%v", p.points)
+}
+
 type point struct {
 	x, y int
 }
@@ -58,6 +64,10 @@ type point struct {
 // eq returns true if two point has the same coordinates.
 func (p point) eq(other point) bool {
 	return p.x == other.x && p.y == other.y
+}
+
+func (p point) String() string {
+	return fmt.Sprintf("{%v, %v}", p.x, p.y)
 }
 
 // canMoveDown return true if the point can be moved down.
@@ -71,18 +81,11 @@ func (p point) canMoveDown(b board) bool {
 
 type model struct {
 	board *board
-
-	// pos point
-
-	// The current pience being moved in the board.
-	piece *piece
 }
 
 func initialModel() model {
 	return model{
 		board: initBoard(),
-
-		piece: pickPiece(),
 	}
 }
 
@@ -119,13 +122,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
-			if m.piece.canMoveDown(*m.board) {
-				m.piece.moveDown()
-				break
+			if currentPiece.canMoveDown(*m.board) {
+				currentPiece.moveDown()
 			}
 
-			m.board.emprint(*m.piece)
-			m.piece = pickPiece()
+			if m.board.emprint(*currentPiece) {
+				currentPiece = pickPiece()
+			}
 
 			// if m.pos.y+1 < len(m.board.m) && m.board.m[m.pos.y+1][m.pos.x] != 1 {
 			// 	m.pos.y++
@@ -147,21 +150,16 @@ type board struct {
 }
 
 // emprint writes 1' in the board as the points indicate.
-func (b *board) emprint(piece piece) {
-	for _, p := range piece.points {
-		b.m[p.x][p.y] = 1
+func (b *board) emprint(piece piece) bool {
+	if !piece.canMoveDown(*b) {
+		for _, p := range piece.points {
+			b.m[p.x][p.y] = 1
+		}
+
+		return true
 	}
+	return false
 }
-
-// func (b *board) P(y, x int) string {
-// 	v := b.m[y][y]
-
-// 	if v == 0 {
-// 		return "0"
-// 	}
-
-// 	return "1"
-// }
 
 // initBoard creates an empty board.
 func initBoard() *board {
@@ -180,23 +178,18 @@ func initBoard() *board {
 	return b
 }
 
+// View generates a string representing the current state of the board.
 func (m model) View() string {
 	var board string
 
 	for i := range 33 {
 		var row string
 		for j := range 16 {
-			if m.piece.isIn(point{i, j}) {
+			if currentPiece.isIn(point{i, j}) {
 				row += "1"
 			} else {
 				row += fmt.Sprintf("%v", m.board.m[i][j])
 			}
-
-			// if i == m.pos.y && j == m.pos.x {
-			// 	row += "1"
-			// } else {
-			// 	row += fmt.Sprintf("%v", m.board.m[i][j])
-			// }
 		}
 		board += row + "\n"
 	}
@@ -213,5 +206,12 @@ var gamePieces = []piece{
 
 // pickPiece returns a random piece for the game.
 func pickPiece() *piece {
-	return &gamePieces[0]
+	picked := gamePieces[0]
+
+	p := &piece{}
+	for _, pp := range picked.points {
+		p.points = append(p.points, &point{x: pp.x, y: pp.y})
+	}
+
+	return p
 }
