@@ -73,15 +73,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			m.board.m[m.pos.y][m.pos.x] = 1
 			m.pos = point{}
-
-			// if m.pos.y < len(m.board.m) {
-			// 	if m.board.m[m.pos.y+1][m.pos.x] == 1 || m.pos.y+1 == len(m.board.m)-1 {
-			// 		m.board.m[m.pos.y+1][m.pos.x] = 1
-			// 		m.pos = point{}
-			// 	} else {
-			// 		m.pos.y++
-			// 	}
-			// }
 		}
 	}
 
@@ -124,9 +115,6 @@ func initBoard() *board {
 func (m model) View() string {
 	var board string
 
-	// for i := range len(m.board.m) {
-	// 	board += fmt.Sprintf("%v\n", m.board.m[i])
-	// }
 	for i := range 33 {
 		var row string
 		for j := range 16 {
