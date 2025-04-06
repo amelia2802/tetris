@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"slices"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -209,28 +208,18 @@ func (b *board) emprint(piece piece) bool {
 }
 
 func (b *board) removeFillRows() {
-	var rowsDel []int
-
-	for i := len(b.m) - 1; i > 0; i-- {
+	for i := 0; i < len(b.m); i++ {
 		var sum int
 		for _, j := range b.m[i] {
 			sum += j
 		}
-
 		if sum == len(b.m[i]) { // the entire row is filled.
-			rowsDel = append(rowsDel, i)
+			// b.m[i] = make([]int, w)
+			b.m = append(b.m[:i], b.m[i+1:]...)
+			b.m = append(b.m, make([]int, w))
+			i--
 		}
 	}
-
-	// Remove the row i and insert a new, empty one on the top.
-	for _, i := range rowsDel {
-		b.m = append(b.m[:i], b.m[i:]...)
-	}
-
-	for _, i := range rowsDel {
-		b.m = slices.Insert(b.m, 0, make([]int, len(b.m[i])))
-	}
-
 }
 
 const (
