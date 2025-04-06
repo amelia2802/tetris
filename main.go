@@ -229,15 +229,20 @@ func (b *board) removeFillRows() {
 
 }
 
+const (
+	w = 10
+	h = 20
+)
+
 // initBoard creates an empty board.
 func initBoard() *board {
 	b := &board{
 		m: make([][]int, 0),
 	}
 
-	for i := 0; i < 33; i++ {
+	for i := 0; i < h; i++ {
 		var row []int
-		for j := 0; j < 16; j++ {
+		for j := 0; j < w; j++ {
 			row = append(row, 0)
 		}
 		b.m = append(b.m, row)
@@ -250,9 +255,9 @@ func initBoard() *board {
 func (m model) View() string {
 	var board string
 
-	for i := range 33 {
+	for i := range h {
 		var row string
-		for j := range 16 {
+		for j := range w {
 			if currentPiece.isIn(point{i, j}) {
 				row += "1"
 			} else {
@@ -268,13 +273,29 @@ func (m model) View() string {
 // gamePieces defines the possible pieces that the game can show.
 var gamePieces = []piece{
 	{
-		points: []*point{{x: 0, y: 0}},
+		// ----
+		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}},
+	},
+	{
+		// --
+		// --
+		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}},
+	},
+	{
+		//  --
+		// --
+		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}},
+	},
+	{
+		//  -
+		// ---
+		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 1}},
 	},
 }
 
 // pickPiece returns a random piece for the game.
 func pickPiece() *piece {
-	picked := gamePieces[0]
+	picked := gamePieces[3]
 
 	p := &piece{}
 	for _, pp := range picked.points {
