@@ -62,7 +62,7 @@ func (p point) eq(other point) bool {
 
 // canMoveDown return true if the point can be moved down.
 func (p point) canMoveDown(b board) bool {
-	if p.y+1 < len(b.m) && b.m[p.y+1][p.x] != 1 { // Move down allowed.
+	if p.x+1 < len(b.m) && b.m[p.x+1][p.y] != 1 { // Move down allowed.
 		return true
 	}
 
@@ -72,10 +72,10 @@ func (p point) canMoveDown(b board) bool {
 type model struct {
 	board *board
 
-	pos point
+	// pos point
 
 	// The current pience being moved in the board.
-	piece piece
+	piece *piece
 }
 
 func initialModel() model {
@@ -108,14 +108,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "up", "k":
 
 		case "left":
-			if m.pos.x > 0 {
-				m.pos.x--
-			}
+			// if m.pos.x > 0 {
+			// 	m.pos.x--
+			// }
 
 		case "right":
-			if m.pos.x < len(m.board.m)-1 {
-				m.pos.x++
-			}
+			// if m.pos.x < len(m.board.m)-1 {
+			// 	m.pos.x++
+			// }
 
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
@@ -124,7 +124,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				break
 			}
 
-			m.board.emprint(m.piece)
+			m.board.emprint(*m.piece)
 			m.piece = pickPiece()
 
 			// if m.pos.y+1 < len(m.board.m) && m.board.m[m.pos.y+1][m.pos.x] != 1 {
@@ -149,19 +149,19 @@ type board struct {
 // emprint writes 1' in the board as the points indicate.
 func (b *board) emprint(piece piece) {
 	for _, p := range piece.points {
-		b.m[p.y][p.x] = 1
+		b.m[p.x][p.y] = 1
 	}
 }
 
-func (b *board) P(y, x int) string {
-	v := b.m[y][y]
+// func (b *board) P(y, x int) string {
+// 	v := b.m[y][y]
 
-	if v == 0 {
-		return "0"
-	}
+// 	if v == 0 {
+// 		return "0"
+// 	}
 
-	return "1"
-}
+// 	return "1"
+// }
 
 // initBoard creates an empty board.
 func initBoard() *board {
@@ -212,6 +212,6 @@ var gamePieces = []piece{
 }
 
 // pickPiece returns a random piece for the game.
-func pickPiece() piece {
-	return gamePieces[0]
+func pickPiece() *piece {
+	return &gamePieces[0]
 }
