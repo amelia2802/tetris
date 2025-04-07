@@ -215,9 +215,8 @@ func (b *board) removeFillRows() {
 			sum += j
 		}
 		if sum == len(b.m[i]) { // the entire row is filled.
-			// b.m[i] = make([]int, w)
 			b.m = append(b.m[:i], b.m[i+1:]...)
-			b.m = append(b.m, make([]int, w))
+			b.m = append([][]int{make([]int, w)}, b.m...)
 			i--
 		}
 	}
