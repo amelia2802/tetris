@@ -1,0 +1,30 @@
+Tetris, in Cosole mode. 
+
+Clone the repo and execute it with Go. 
+
+go run main.go
+
+```
+Hello Tetris
+|          |
+|          |
+|          |
+|          |
+| 0        |
+|000       |
+|          |
+|          |
+|          |
+|          |
+|          |
+|          |
+|          |
+|          |
+|          |
+|          |
+|          |
+|          |
+|          |
+|          |
+____________
+```
