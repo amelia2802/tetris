@@ -225,6 +225,8 @@ func (b *board) removeFillRows() {
 const (
 	w = 10
 	h = 20
+
+	blockChar = "0"
 )
 
 // initBoard creates an empty board.
@@ -252,9 +254,9 @@ func (m model) View() string {
 		var row string
 		for j := range w {
 			if currentPiece.isIn(point{i, j}) {
-				row += "1"
+				row += blockChar
 			} else if m.board.m[i][j] == 1 {
-				row += fmt.Sprintf("%v", m.board.m[i][j])
+				row += blockChar // fmt.Sprintf("%v", m.board.m[i][j])
 			} else {
 				row += " "
 			}
