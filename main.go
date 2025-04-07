@@ -17,7 +17,6 @@ const (
 )
 
 var (
-	ticker       = timeTick{}
 	currentPiece = pickPiece()
 	gamePieces   = []piece{
 		{
@@ -197,6 +196,8 @@ func (p *point) canMoveLeft(b board) bool {
 
 type model struct {
 	board *board
+
+	ticker timeTick
 }
 
 func initialModel() model {
@@ -207,7 +208,7 @@ func initialModel() model {
 
 func (m model) Init() tea.Cmd {
 	// Execute the first time tick command.
-	return ticker.run()
+	return m.ticker.run()
 }
 
 // View generates a string representing the current state of the board with the
@@ -273,7 +274,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case timeTick:
 		m.moveDown()
 
-		return m, ticker.run()
+		return m, m.ticker.run()
 	}
 
 	// Return the updated model to the Bubble Tea runtime for processing.
