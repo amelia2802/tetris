@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -16,6 +17,16 @@ func main() {
 		fmt.Printf("Alas, there's been an error: %v", err)
 		os.Exit(1)
 	}
+}
+
+// timeTick is a message sent every 1 second.
+type timeTick struct{}
+
+// tick returns a command that generates a timeTick message.
+func tick() tea.Cmd {
+	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
+		return timeTick{}
+	})
 }
 
 var currentPiece = pickPiece()
@@ -136,14 +147,14 @@ type model struct {
 }
 
 func initialModel() model {
-	return model{
-		board: initBoard(),
-	}
+	m := model{board: initBoard()}
+
+	return m
 }
 
 func (m model) Init() tea.Cmd {
-	// Just return `nil`, which means "no I/O right now, please."
-	return nil
+	// Execute the first time tick command.
+	return tick()
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -182,6 +193,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				currentPiece = pickPiece()
 			}
 		}
+
+	case timeTick:
+		// try moving the piece down, and execute the next time tick.
+		if currentPiece.canMoveDown(*m.board) {
+			currentPiece.moveDown()
+		}
+
+		if m.board.emprint(*currentPiece) {
+			currentPiece = pickPiece()
+		}
+
+		return m, tick()
 	}
 
 	// Return the updated model to the Bubble Tea runtime for processing.
@@ -235,9 +258,9 @@ func initBoard() *board {
 		m: make([][]int, 0),
 	}
 
-	for i := 0; i < h; i++ {
+	for range h {
 		var row []int
-		for j := 0; j < w; j++ {
+		for range w {
 			row = append(row, 0)
 		}
 		b.m = append(b.m, row)
