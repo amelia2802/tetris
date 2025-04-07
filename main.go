@@ -9,6 +9,61 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+const (
+	w = 10
+	h = 20
+
+	blockChar = "0"
+)
+
+var (
+	ticker       = timeTick{}
+	currentPiece = pickPiece()
+	gamePieces   = []piece{
+		{
+			id: "1",
+			// ----
+			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}},
+		},
+		{
+			id: "2",
+			// --
+			// --
+			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}},
+		},
+		{
+			id: "3",
+			//  --
+			// --
+			points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}},
+		},
+		{
+			id: "4",
+			//  -
+			// ---
+			points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 1}},
+		},
+		{
+			id: "5",
+			// -
+			// ---
+			points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 0}},
+		},
+		{
+			id: "6",
+			//   -
+			// ---
+			points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 2}},
+		},
+		{
+			id: "7",
+			// --
+			//  --
+			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}},
+		},
+	}
+)
+
 func main() {
 	fmt.Println("Hello Tetris")
 
@@ -22,15 +77,12 @@ func main() {
 // timeTick is a message sent every 1 second.
 type timeTick struct{}
 
-var ticker = timeTick{}
-
+// run generates a timeTick command.
 func (t timeTick) run() tea.Cmd {
 	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
 		return timeTick{}
 	})
 }
-
-var currentPiece = pickPiece()
 
 // piece is a game piece that can be moved across the board until it is
 // emprinted which then becomes part of the board.
@@ -63,6 +115,8 @@ func (p *piece) canMoveRight(b board) bool {
 	return true
 }
 
+// canMoveLeft returns true if the piece can be moved left based on the
+// current configuration of the board.
 func (p *piece) canMoveLeft(b board) bool {
 	for _, point := range p.points {
 		if !point.canMoveLeft(b) {
@@ -73,18 +127,21 @@ func (p *piece) canMoveLeft(b board) bool {
 	return true
 }
 
+// moveDown moves the piece down.
 func (p *piece) moveDown() {
 	for _, point := range p.points {
 		point.x++
 	}
 }
 
+// moveRight moves the piece right.
 func (p *piece) moveRight() {
 	for _, point := range p.points {
 		point.y++
 	}
 }
 
+// moveLeft moves the piece left.
 func (p *piece) moveLeft() {
 	for _, point := range p.points {
 		point.y--
@@ -101,10 +158,7 @@ func (p *piece) isIn(point point) bool {
 	return false
 }
 
-func (p *piece) String() string {
-	return fmt.Sprintf("%v", p.points)
-}
-
+// point is 1x1 block where a collection of points is a piece of the game.
 type point struct {
 	x, y int
 }
@@ -112,10 +166,6 @@ type point struct {
 // eq returns true if two point has the same coordinates.
 func (p point) eq(other point) bool {
 	return p.x == other.x && p.y == other.y
-}
-
-func (p point) String() string {
-	return fmt.Sprintf("{%v, %v}", p.x, p.y)
 }
 
 // canMoveDown return true if the point can be moved down.
@@ -127,6 +177,7 @@ func (p point) canMoveDown(b board) bool {
 	return false
 }
 
+// canMoveRight returns true if the point can be moved right.
 func (p *point) canMoveRight(b board) bool {
 	if p.y+1 < len(b.m[0]) && b.m[p.x][p.y+1] != 1 { // Move right allowed.
 		return true
@@ -135,6 +186,7 @@ func (p *point) canMoveRight(b board) bool {
 	return false
 }
 
+// canMoveLeft returns true if the point can be left.
 func (p *point) canMoveLeft(b board) bool {
 	if p.y > 0 && b.m[p.x][p.y-1] != 1 { // Move left is allowed.
 		return true
@@ -155,7 +207,35 @@ func initialModel() model {
 
 func (m model) Init() tea.Cmd {
 	// Execute the first time tick command.
-	return timeTick.run()
+	return ticker.run()
+}
+
+// View generates a string representing the current state of the board with the
+// current piece overlay on top.
+func (m model) View() string {
+	var board string
+
+	for i := range h {
+		var row string
+		for j := range w {
+			if currentPiece.isIn(point{i, j}) {
+				row += blockChar
+			} else if m.board.m[i][j] == 1 {
+				row += blockChar // fmt.Sprintf("%v", m.board.m[i][j])
+			} else {
+				row += " "
+			}
+		}
+		board += "|" + row + "|" + "\n"
+	}
+
+	bottom := ""
+	for range w + 2 {
+		bottom += "_"
+	}
+
+	board += bottom
+	return board
 }
 
 // Update updates the model as a response to a IO change.
@@ -187,26 +267,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
-			if currentPiece.canMoveDown(*m.board) {
-				currentPiece.moveDown()
-			}
-
-			if m.board.emprint(*currentPiece) {
-				currentPiece = pickPiece()
-			}
+			m.moveDown()
 		}
 
 	case timeTick:
-		// try moving the piece down, and execute the next time tick.
-		if currentPiece.canMoveDown(*m.board) {
-			currentPiece.moveDown()
-		}
+		m.moveDown()
 
-		if m.board.emprint(*currentPiece) {
-			currentPiece = pickPiece()
-		}
-
-		return m, timeTick.run()
+		return m, ticker.run()
 	}
 
 	// Return the updated model to the Bubble Tea runtime for processing.
@@ -214,6 +281,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+func (m model) moveDown() {
+	if currentPiece.canMoveDown(*m.board) {
+		currentPiece.moveDown()
+	}
+
+	if m.board.emprint(*currentPiece) {
+		currentPiece = pickPiece()
+	}
+}
+
+// board represent the current state of the game.
+//
+// The current moving piece is overlay on top of the board until it is emprinted
+// on the board.
 type board struct {
 	m [][]int
 }
@@ -247,13 +328,6 @@ func (b *board) removeFillRows() {
 	}
 }
 
-const (
-	w = 10
-	h = 20
-
-	blockChar = "0"
-)
-
 // initBoard creates an empty board.
 func initBoard() *board {
 	b := &board{
@@ -269,78 +343,6 @@ func initBoard() *board {
 	}
 
 	return b
-}
-
-// View generates a string representing the current state of the board.
-func (m model) View() string {
-	var board string
-
-	for i := range h {
-		var row string
-		for j := range w {
-			if currentPiece.isIn(point{i, j}) {
-				row += blockChar
-			} else if m.board.m[i][j] == 1 {
-				row += blockChar // fmt.Sprintf("%v", m.board.m[i][j])
-			} else {
-				row += " "
-			}
-		}
-		board += "|" + row + "|" + "\n"
-	}
-
-	bottom := ""
-	for range w + 2 {
-		bottom += "_"
-	}
-
-	board += bottom
-	return board
-}
-
-// gamePieces defines the possible pieces that the game can show.
-var gamePieces = []piece{
-	{
-		id: "1",
-		// ----
-		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}},
-	},
-	{
-		id: "2",
-		// --
-		// --
-		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}},
-	},
-	{
-		id: "3",
-		//  --
-		// --
-		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}},
-	},
-	{
-		id: "4",
-		//  -
-		// ---
-		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 1}},
-	},
-	{
-		id: "5",
-		// -
-		// ---
-		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 0}},
-	},
-	{
-		id: "6",
-		//   -
-		// ---
-		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 2}},
-	},
-	{
-		id: "7",
-		// --
-		//  --
-		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}},
-	},
 }
 
 // pickPiece returns a random piece for the game.
