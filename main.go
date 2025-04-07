@@ -13,7 +13,7 @@ const (
 	w = 10
 	h = 20
 
-	blockChar = "0"
+	blockChar = "█"
 )
 
 var (
