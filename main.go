@@ -254,13 +254,21 @@ func (m model) View() string {
 		for j := range w {
 			if currentPiece.isIn(point{i, j}) {
 				row += "1"
-			} else {
+			} else if m.board.m[i][j] == 1 {
 				row += fmt.Sprintf("%v", m.board.m[i][j])
+			} else {
+				row += " "
 			}
 		}
-		board += row + "\n"
+		board += "|" + row + "|" + "\n"
 	}
 
+	bottom := ""
+	for range w + 2 {
+		bottom += "_"
+	}
+
+	board += bottom
 	return board
 }
 
