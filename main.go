@@ -268,7 +268,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
-			m.moveDown()
+			if currentPiece.canMoveDown(*m.board) {
+				currentPiece.moveDown()
+			}
 		}
 
 	case timeTick:
