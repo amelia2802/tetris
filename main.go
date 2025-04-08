@@ -485,6 +485,8 @@ func pickPiece() *piece {
 		p.points = append(p.points, &point{x: pp.x, y: pp.y})
 	}
 
+	p.move(0, w/2-1) // center the piece in the board.
+
 	moves = 0
 	return p
 }
