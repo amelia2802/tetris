@@ -167,6 +167,8 @@ var (
 		7:  18,
 		18: 7,
 	}
+
+	moves = 0
 )
 
 func main() {
@@ -234,6 +236,7 @@ func (p *piece) canMoveLeft(b board) bool {
 
 // moveDown moves the piece down.
 func (p *piece) moveDown() {
+	moves++
 	for _, point := range p.points {
 		point.x++
 	}
@@ -389,7 +392,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case timeTick:
-		m.moveDown()
+		if m.moveDown() != nil {
+			return m, tea.Quit
+		}
 
 		return m, m.ticker.run()
 	}
@@ -399,14 +404,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m model) moveDown() {
+func (m model) moveDown() tea.Cmd {
 	if currentPiece.canMoveDown(*m.board) {
 		currentPiece.moveDown()
+	} else {
+		// if the pieces just showed up and it can't move down, then the game is over.
+		if moves == 0 {
+			return tea.Quit
+		}
 	}
 
 	if m.board.emprint(*currentPiece) {
 		currentPiece = pickPiece()
 	}
+
+	return nil
 }
 
 // board represent the current state of the game.
@@ -473,6 +485,7 @@ func pickPiece() *piece {
 		p.points = append(p.points, &point{x: pp.x, y: pp.y})
 	}
 
+	moves = 0
 	return p
 }
 
