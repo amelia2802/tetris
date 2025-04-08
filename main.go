@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"time"
 
@@ -18,60 +19,208 @@ const (
 
 var (
 	currentPiece = pickPiece()
-	gamePieces   = []piece{
-		{
-			id:     "0",
+
+	pieces = map[int]piece{
+		0: {
+			id: 0,
+			// |
+			// |
+			// |
+			// |
 			points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}, {x: 3, y: 0}},
 		},
-		{
-			id: "1",
+		1: {
+			id: 1,
 			// ----
 			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}},
 		},
-		{
-			id: "2",
+		2: {
+			id: 2,
 			// --
 			// --
 			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}},
 		},
-		{
-			id: "3",
+		3: {
+			id: 3,
 			//  --
 			// --
 			points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}},
 		},
-		{
-			id: "4",
+		4: {
+			id: 4,
 			//  -
 			// ---
 			points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 1}},
 		},
-		{
-			id: "5",
+		5: {
+			id: 5,
 			// -
 			// ---
 			points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 0}},
 		},
-		{
-			id: "6",
+		6: {
+			id: 6,
 			//   -
 			// ---
 			points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 2}},
 		},
-		{
-			id: "7",
+		7: {
+			id: 7,
 			// --
 			//  --
 			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}},
 		},
-		{
-			id: "8",
+		8: {
+			id: 8,
 			// |
 			// | |
 			//   |
 			points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}},
 		},
+		9: {
+			id: 9,
+			// |
+			// | |
+			// |
+			points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 0}},
+		},
+		10: {
+			id: 10,
+			// ---
+			//  -
+			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 1, y: 1}},
+		},
+		11: {
+			id: 11,
+			//  |
+			// ||
+			//  |
+			points: []*point{{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}},
+		},
+		12: {
+			id: 12,
+			// ||
+			// |
+			// |
+			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}, {x: 2, y: 0}},
+		},
+		13: {
+			id: 13,
+			// ---
+			//   _
+			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 1, y: 2}},
+		},
+		14: {
+			id: 14,
+			//  |
+			//  |
+			// ||
+			points: []*point{{x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 0}, {x: 2, y: 1}},
+		},
+		15: {
+			id: 15,
+			// |
+			// |
+			// ||
+			points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}, {x: 2, y: 1}},
+		},
+		16: {
+			id: 16,
+			// ---
+			// -
+			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 1, y: 0}},
+		},
+
+		17: {
+			id: 17,
+			// ||
+			//  |
+			//  |
+			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1}},
+		},
+		18: {
+			id: 18,
+			//  |
+			// ||
+			// |
+			points: []*point{{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 0}},
+		},
 	}
+
+	// gamePieces = []piece{
+	// 	{
+	// 		id:     "0",
+	// 		points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}, {x: 3, y: 0}},
+	// 	},
+	// 	{
+	// 		id: "1",
+	// 		// ----
+	// 		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}},
+	// 	},
+	// 	{
+	// 		id: "2",
+	// 		// --
+	// 		// --
+	// 		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}},
+	// 	},
+	// 	{
+	// 		id: "3",
+	// 		//  --
+	// 		// --
+	// 		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}},
+	// 	},
+	// 	{
+	// 		id: "4",
+	// 		//  -
+	// 		// ---
+	// 		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 1}},
+	// 	},
+	// 	{
+	// 		id: "5",
+	// 		// -
+	// 		// ---
+	// 		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 0}},
+	// 	},
+	// 	{
+	// 		id: "6",
+	// 		//   -
+	// 		// ---
+	// 		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 2}},
+	// 	},
+	// 	{
+	// 		id: "7",
+	// 		// --
+	// 		//  --
+	// 		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}},
+	// 	},
+	// 	{
+	// 		id: "8",
+	// 		// |
+	// 		// | |
+	// 		//   |
+	// 		points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}},
+	// 	},
+	// 	{
+	// 		id: "9",
+	// 		// |
+	// 		// | |
+	// 		// |
+	// 		points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 0}},
+	// 	},
+	// 	{
+	// 		id: "10",
+	// 		// ---
+	// 		//  -
+	// 		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 1, y: 1}},
+	// 	},
+	// 	{
+	// 		id: "11",
+	// 		//  |
+	// 		// ||
+	// 		//  |
+	// 		points: []*point{{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}},
+	// 	},
+	// }
 )
 
 func main() {
@@ -97,7 +246,7 @@ func (t timeTick) run() tea.Cmd {
 // piece is a game piece that can be moved across the board until it is
 // emprinted which then becomes part of the board.
 type piece struct {
-	id     string
+	id     int
 	points []*point
 }
 
@@ -370,8 +519,8 @@ func initBoard() *board {
 
 // pickPiece returns a random piece for the game.
 func pickPiece() *piece {
-	// rnd := rand.Intn(len(gamePieces))
-	picked := gamePieces[3]
+	rnd := rand.Intn(len(pieces))
+	picked := pieces[rnd]
 
 	p := &piece{id: picked.id}
 	for _, pp := range picked.points {
@@ -383,7 +532,8 @@ func pickPiece() *piece {
 
 func (p *piece) rotate() *piece {
 	if r, ok := ratations[p.id]; ok {
-		rotated := cpPiece(r)
+		rr := pieces[r]
+		rotated := cpPiece(rr)
 		rotated.move(p.points[0].x, p.points[0].y)
 		return rotated
 	}
@@ -391,31 +541,28 @@ func (p *piece) rotate() *piece {
 	return p
 }
 
-var ratations = map[string]*piece{
-	"0": {
-		id:     "1",
-		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}},
-	},
-	"1": {
-		id:     "0",
-		points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}, {x: 3, y: 0}},
-	},
-	"3": {
-		id: "8",
-		// |
-		// | |
-		//   |
-		points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}},
-	},
-	"8": {
-		id: "3",
-		//  --
-		// --
-		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}},
-	},
+var ratations = map[int]int{
+	0:  1,
+	1:  0,
+	3:  8,
+	8:  3,
+	4:  9,
+	9:  10,
+	10: 11,
+	11: 4,
+	5:  12,
+	12: 13,
+	13: 14,
+	14: 5,
+	6:  15,
+	15: 16,
+	16: 17,
+	17: 6,
+	7:  18,
+	18: 7,
 }
 
-func cpPiece(p *piece) *piece {
+func cpPiece(p piece) *piece {
 	cp := &piece{id: p.id}
 	for _, pp := range p.points {
 		cp.points = append(cp.points, &point{x: pp.x, y: pp.y})
