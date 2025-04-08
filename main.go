@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 	"time"
 
@@ -13,12 +12,17 @@ const (
 	w = 10
 	h = 20
 
-	blockChar = "█"
+	// blockChar = "█"
+	blockChar = "0"
 )
 
 var (
 	currentPiece = pickPiece()
 	gamePieces   = []piece{
+		{
+			id:     "0",
+			points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}, {x: 3, y: 0}},
+		},
 		{
 			id: "1",
 			// ----
@@ -157,6 +161,14 @@ func (p *piece) isIn(point point) bool {
 	return false
 }
 
+func (p *piece) String() string {
+	var str string
+	for _, pp := range p.points {
+		str += fmt.Sprintf("(%d,%d) ", pp.x, pp.y)
+	}
+	return str
+}
+
 // point is 1x1 block where a collection of points is a piece of the game.
 type point struct {
 	x, y int
@@ -255,6 +267,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// The "up" and "k" keys move the cursor up
 		case "up", "k":
+			currentPiece = currentPiece.rotate()
 
 		case "left":
 			if currentPiece.canMoveLeft(*m.board) {
@@ -350,13 +363,50 @@ func initBoard() *board {
 
 // pickPiece returns a random piece for the game.
 func pickPiece() *piece {
-	rnd := rand.Intn(len(gamePieces))
-	picked := gamePieces[rnd]
+	// rnd := rand.Intn(len(gamePieces))
+	picked := gamePieces[0]
 
-	p := &piece{}
+	p := &piece{id: picked.id}
 	for _, pp := range picked.points {
 		p.points = append(p.points, &point{x: pp.x, y: pp.y})
 	}
 
 	return p
+}
+
+func (p *piece) rotate() *piece {
+	if r, ok := ratations[p.id]; ok {
+		rotated := cpPiece(r)
+		rotated.move(p.points[0].x, p.points[0].y)
+		return rotated
+	}
+
+	return p
+}
+
+var ratations = map[string]*piece{
+	"0": {
+		id:     "1",
+		points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}},
+	},
+	"1": {
+		id:     "0",
+		points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}, {x: 3, y: 0}},
+	},
+}
+
+func cpPiece(p *piece) *piece {
+	cp := &piece{id: p.id}
+	for _, pp := range p.points {
+		cp.points = append(cp.points, &point{x: pp.x, y: pp.y})
+	}
+
+	return cp
+}
+
+func (p *piece) move(x, y int) {
+	for _, pp := range p.points {
+		pp.x += x
+		pp.y += y
+	}
 }
