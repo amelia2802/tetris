@@ -64,6 +64,13 @@ var (
 			//  --
 			points: []*point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}},
 		},
+		{
+			id: "8",
+			// |
+			// | |
+			//   |
+			points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}},
+		},
 	}
 )
 
@@ -364,7 +371,7 @@ func initBoard() *board {
 // pickPiece returns a random piece for the game.
 func pickPiece() *piece {
 	// rnd := rand.Intn(len(gamePieces))
-	picked := gamePieces[0]
+	picked := gamePieces[3]
 
 	p := &piece{id: picked.id}
 	for _, pp := range picked.points {
@@ -392,6 +399,19 @@ var ratations = map[string]*piece{
 	"1": {
 		id:     "0",
 		points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}, {x: 3, y: 0}},
+	},
+	"3": {
+		id: "8",
+		// |
+		// | |
+		//   |
+		points: []*point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}},
+	},
+	"8": {
+		id: "3",
+		//  --
+		// --
+		points: []*point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}},
 	},
 }
 
