@@ -277,6 +277,58 @@ func (p *piece) String() string {
 	return str
 }
 
+func (p *piece) rotate() *piece {
+	if r, ok := ratations[p.id]; ok {
+		rr := pieces[r]
+		rotated := cpPiece(rr)
+		rotated.move(p.points[0].x, p.points[0].y)
+		rotated.bounds()
+		return rotated
+	}
+
+	return p
+}
+
+func cpPiece(p piece) *piece {
+	cp := &piece{id: p.id}
+	for _, pp := range p.points {
+		cp.points = append(cp.points, &point{x: pp.x, y: pp.y})
+	}
+
+	return cp
+}
+
+func (p *piece) move(x, y int) {
+	for _, pp := range p.points {
+		pp.x += x
+		pp.y += y
+	}
+}
+
+// moves the piece to the left or right if it is out of bounds.
+// After rotating the piece, it may be out of bounds, this function fixes that.
+func (p *piece) bounds() {
+	oob := true
+	for oob {
+		moves := false
+		for _, pp := range p.points {
+			if pp.y < 0 {
+				p.moveRight()
+				moves = true
+				break
+			}
+			if pp.y >= w {
+				p.moveLeft()
+				moves = true
+				break
+			}
+		}
+		if !moves {
+			oob = false
+		}
+	}
+}
+
 // point is 1x1 block where a collection of points is a piece of the game.
 type point struct {
 	x, y int
@@ -503,56 +555,4 @@ func pickPiece() *piece {
 
 	moves = 0
 	return p
-}
-
-func (p *piece) rotate() *piece {
-	if r, ok := ratations[p.id]; ok {
-		rr := pieces[r]
-		rotated := cpPiece(rr)
-		rotated.move(p.points[0].x, p.points[0].y)
-		rotated.bounds()
-		return rotated
-	}
-
-	return p
-}
-
-func cpPiece(p piece) *piece {
-	cp := &piece{id: p.id}
-	for _, pp := range p.points {
-		cp.points = append(cp.points, &point{x: pp.x, y: pp.y})
-	}
-
-	return cp
-}
-
-func (p *piece) move(x, y int) {
-	for _, pp := range p.points {
-		pp.x += x
-		pp.y += y
-	}
-}
-
-// moves the piece to the left or right if it is out of bounds.
-// After rotating the piece, it may be out of bounds, this function fixes that.
-func (p *piece) bounds() {
-	oob := true
-	for oob {
-		moves := false
-		for _, pp := range p.points {
-			if pp.y < 0 {
-				p.moveRight()
-				moves = true
-				break
-			}
-			if pp.y >= w {
-				p.moveLeft()
-				moves = true
-				break
-			}
-		}
-		if !moves {
-			oob = false
-		}
-	}
 }
