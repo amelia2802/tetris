@@ -520,7 +520,7 @@ func (b *board) removeFillRows() {
 			score += 10
 			if score%100 == 0 {
 				level++
-				speed -= 200 * time.Millisecond
+				speed -= 150 * time.Millisecond
 			}
 		}
 	}
