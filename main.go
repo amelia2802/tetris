@@ -516,7 +516,7 @@ func (b *board) removeFillRows() {
 			b.m = append([][]int{make([]int, w)}, b.m...)
 			i--
 			score += 10
-			if score%50 == 0 {
+			if score%100 == 0 {
 				level++
 				speed -= 200 * time.Millisecond
 			}
