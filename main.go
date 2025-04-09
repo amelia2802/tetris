@@ -147,6 +147,8 @@ var (
 		},
 	}
 
+	initialPieces = []int{1, 2, 3, 4, 5, 6, 7}
+
 	ratations = map[int]int{
 		0:  1,
 		1:  0,
@@ -543,7 +545,7 @@ func initBoard() *board {
 
 // pickPiece returns a random piece for the game.
 func pickPiece() *piece {
-	rnd := rand.Intn(len(pieces))
+	rnd := rand.Intn(len(initialPieces))
 	picked := pieces[rnd]
 
 	p := cpPiece(picked)
