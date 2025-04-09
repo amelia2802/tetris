@@ -169,6 +169,9 @@ var (
 	}
 
 	moves = 0
+	score = 0
+	level = 1
+	speed = 1000 * time.Millisecond
 )
 
 func main() {
@@ -186,7 +189,7 @@ type timeTick struct{}
 
 // run generates a timeTick command.
 func (t timeTick) run() tea.Cmd {
-	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
+	return tea.Tick(speed, func(t time.Time) tea.Msg {
 		return timeTick{}
 	})
 }
@@ -332,6 +335,12 @@ func (m model) Init() tea.Cmd {
 // current piece overlay on top.
 func (m model) View() string {
 	var board string
+	board += fmt.Sprintf("Score: %d, level: %d\n", score, level)
+	top := ""
+	for range w + 2 {
+		top += "\\"
+	}
+	board += top + "\n"
 
 	for i := range h {
 		var row string
@@ -349,7 +358,7 @@ func (m model) View() string {
 
 	bottom := ""
 	for range w + 2 {
-		bottom += "_"
+		bottom += "\\"
 	}
 
 	board += bottom
@@ -454,6 +463,11 @@ func (b *board) removeFillRows() {
 			b.m = append(b.m[:i], b.m[i+1:]...)
 			b.m = append([][]int{make([]int, w)}, b.m...)
 			i--
+			score += 10
+			if score%50 == 0 {
+				level++
+				speed -= 200 * time.Millisecond
+			}
 		}
 	}
 }
@@ -480,7 +494,7 @@ func pickPiece() *piece {
 	rnd := rand.Intn(len(pieces))
 	picked := pieces[rnd]
 
-	p := &piece{id: picked.id}
+	p := cpPiece(picked)
 	for _, pp := range picked.points {
 		p.points = append(p.points, &point{x: pp.x, y: pp.y})
 	}
