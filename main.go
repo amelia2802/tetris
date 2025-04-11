@@ -218,6 +218,8 @@ func (m model) moveDown() tea.Cmd {
 		level = tmp
 	}
 
+	speed = tetris.Speed(level)
+
 	return nil
 }
 
