@@ -15,6 +15,10 @@ const (
 
 	// blockChar = "█"
 	blockChar = "0"
+
+	menu = `
+	p - pause, q - quit, space - drop
+	`
 )
 
 var (
@@ -386,10 +390,6 @@ func (m model) Init() tea.Cmd {
 	// Execute the first time tick command.
 	return m.ticker.run()
 }
-
-const menu = `
-p - pause, q - quit, space - drop
-`
 
 // View generates a string representing the current state of the board with the
 // current piece overlay on top.
