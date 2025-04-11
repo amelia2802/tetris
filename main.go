@@ -436,6 +436,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Cool, what was the actual key pressed?
 		switch msg.String() {
 
+		case " ":
+			// Drop the piece.
+			if paused {
+				return m, nil
+			}
+
+			for currentPiece.canMoveDown(*m.board) {
+				currentPiece.moveDown()
+			}
+
 		case "p":
 			// Pause the game.
 			paused = !paused
