@@ -17,9 +17,7 @@ const (
 	// blockChar = "█"
 	blockChar = "0"
 
-	menu = `
-	p - pause, q - quit, space - drop
-	`
+	menu = "\np - pause, q - quit, space - drop\n"
 )
 
 var (
