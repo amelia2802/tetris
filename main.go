@@ -387,10 +387,16 @@ func (m model) Init() tea.Cmd {
 	return m.ticker.run()
 }
 
+const menu = `
+p - pause, q - quit, space - drop
+`
+
 // View generates a string representing the current state of the board with the
 // current piece overlay on top.
 func (m model) View() string {
 	var board string
+	board += menu + "\n"
+
 	board += fmt.Sprintf("Score: %d, level: %d\n", score, level)
 
 	if paused {
