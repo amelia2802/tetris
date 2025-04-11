@@ -17,7 +17,7 @@ const (
 	// blockChar = "█"
 	blockChar = "0"
 
-	menu = "\np - pause, q - quit, space - drop\n"
+	menu = "\np - pause, q - quit, space - drop, r - reset\n"
 )
 
 var (
@@ -25,7 +25,7 @@ var (
 
 	score = 0
 	level = 1
-	speed = 1000 * time.Millisecond
+	speed = tetris.Speed(1)
 
 	paused = false
 )
@@ -135,6 +135,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, m.ticker.run()
 			}
 
+		case "r":
+			// Reset the game.
+			paused = false
+			m.board = tetris.NewBoard(w, h)
+			currentPiece = tetris.PickPiece(w)
+			score = 0
+			level = 1
+			speed = tetris.Speed(1)
+
 		// These keys should exit the program.
 		case "ctrl+c", "q":
 			return m, tea.Quit
@@ -206,7 +215,8 @@ func (m model) moveDown() tea.Cmd {
 	if cnt, ok := m.board.Emprint(*currentPiece); ok {
 		currentPiece = tetris.PickPiece(w)
 
-		score += 10 * cnt
+		deletedScore := (10 * cnt) * (cnt + 1) / 2
+		score += deletedScore
 		tmp := level
 		for l, v := range levels {
 			if score > v {
