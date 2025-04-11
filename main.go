@@ -174,6 +174,8 @@ var (
 	score = 0
 	level = 1
 	speed = 1000 * time.Millisecond
+
+	paused = false
 )
 
 func main() {
@@ -390,6 +392,11 @@ func (m model) Init() tea.Cmd {
 func (m model) View() string {
 	var board string
 	board += fmt.Sprintf("Score: %d, level: %d\n", score, level)
+
+	if paused {
+		board += "GAME PAUSED\n"
+	}
+
 	top := ""
 	for range w + 2 {
 		top += "\\"
@@ -429,32 +436,59 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Cool, what was the actual key pressed?
 		switch msg.String() {
 
+		case "p":
+			// Pause the game.
+			paused = !paused
+			if !paused {
+				return m, m.ticker.run()
+			}
+
 		// These keys should exit the program.
 		case "ctrl+c", "q":
 			return m, tea.Quit
 
 		// The "up" and "k" keys move the cursor up
 		case "up", "k":
+			if paused {
+				return m, nil
+			}
+
 			currentPiece = currentPiece.rotate()
 
 		case "left":
+			if paused {
+				return m, nil
+			}
+
 			if currentPiece.canMoveLeft(*m.board) {
 				currentPiece.moveLeft()
 			}
 
 		case "right":
+			if paused {
+				return m, nil
+			}
+
 			if currentPiece.canMoveRight(*m.board) {
 				currentPiece.moveRight()
 			}
 
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
+			if paused {
+				return m, nil
+			}
+
 			if currentPiece.canMoveDown(*m.board) {
 				currentPiece.moveDown()
 			}
 		}
 
 	case timeTick:
+		if paused {
+			return m, nil
+		}
+
 		if m.moveDown() != nil {
 			return m, tea.Quit
 		}
