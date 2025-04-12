@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"com.github.anicolaspp/tetris/tetris"
+	"github.com/charmbracelet/lipgloss"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -14,7 +15,6 @@ const (
 	w = 10
 	h = 20
 
-	// blockChar = "█"
 	blockChar = "0"
 
 	menu = "\np - pause, q - quit, space - drop, r - reset\n"
@@ -70,16 +70,20 @@ func (m model) Init() tea.Cmd {
 // View generates a string representing the current state of the board with the
 // current piece overlay on top.
 func (m model) View() string {
-	var board string
-	board += menu + "\n"
 
-	board += fmt.Sprintf("Score: %d, level: %d\n", score, level)
+	// menuStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("green"))
+
+	var board string
+	board += lipgloss.NewStyle().Foreground(lipgloss.ANSIColor(34)).Render(menu)
+
+	board += lipgloss.NewStyle().Foreground(lipgloss.ANSIColor(32)).Render(fmt.Sprintf("\nScore: %d, level: %d", score, level))
 
 	if paused {
-		board += "GAME PAUSED\n"
+		board += lipgloss.NewStyle().Foreground(lipgloss.ANSIColor(20)).Blink(true).Render("\nGAME PAUSED\n")
 	}
 
-	top := ""
+	// borderStyle := lipgloss.NewStyle().BorderStyle(lipgloss.BlockBorder()).Foreground(lipgloss.Color("white")).Background(lipgloss.Color("black"))
+	top := "\n" // borderStyle.Render("\n")
 	for range w + 2 {
 		top += "\\"
 	}
