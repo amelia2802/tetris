@@ -91,7 +91,7 @@ func (m model) View() string {
 			if currentPiece.IsIn(tetris.MakePoint(i, j)) {
 				row += blockChar
 			} else if m.board.At(i, j) == 1 {
-				row += blockChar // fmt.Sprintf("%v", m.board.m[i][j])
+				row += blockChar
 			} else {
 				row += " "
 			}
@@ -169,10 +169,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			currentPiece.TryMoveRight(*m.board)
 
-			// if currentPiece.CanMoveRight(*m.board) {
-			// 	currentPiece.MoveRight()
-			// }
-
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
 			if paused {
@@ -180,9 +176,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			currentPiece.TryMoveDown(*m.board)
-			// if currentPiece.CanMoveDown(*m.board) {
-			// 	currentPiece.MoveDown()
-			// }
 		}
 
 	case timeTick:
@@ -208,15 +201,6 @@ func (m model) moveDown() tea.Cmd {
 			return tea.Quit
 		}
 	}
-
-	// if currentPiece.CanMoveDown(*m.board) {
-	// 	currentPiece.MoveDown()
-	// } else {
-	// 	// if the pieces just showed up and it can't move down, then the game is over.
-	// 	if currentPiece.Moves() == 0 {
-	// 		return tea.Quit
-	// 	}
-	// }
 
 	if cnt, ok := m.board.Emprint(*currentPiece); ok {
 		currentPiece = tetris.PickPiece(w)
