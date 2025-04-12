@@ -124,8 +124,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 
-			for currentPiece.CanMoveDown(*m.board) {
-				currentPiece.MoveDown()
+			for currentPiece.TryMoveDown(*m.board) {
 			}
 
 		case "p":
@@ -161,18 +160,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 
-			if currentPiece.CanMoveLeft(*m.board) {
-				currentPiece.MoveLeft()
-			}
+			currentPiece.TryMoveLeft(*m.board)
 
 		case "right":
 			if paused {
 				return m, nil
 			}
 
-			if currentPiece.CanMoveRight(*m.board) {
-				currentPiece.MoveRight()
-			}
+			currentPiece.TryMoveRight(*m.board)
+
+			// if currentPiece.CanMoveRight(*m.board) {
+			// 	currentPiece.MoveRight()
+			// }
 
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
@@ -180,9 +179,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 
-			if currentPiece.CanMoveDown(*m.board) {
-				currentPiece.MoveDown()
-			}
+			currentPiece.TryMoveDown(*m.board)
+			// if currentPiece.CanMoveDown(*m.board) {
+			// 	currentPiece.MoveDown()
+			// }
 		}
 
 	case timeTick:
@@ -203,14 +203,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) moveDown() tea.Cmd {
-	if currentPiece.CanMoveDown(*m.board) {
-		currentPiece.MoveDown()
-	} else {
-		// if the pieces just showed up and it can't move down, then the game is over.
+	if !currentPiece.TryMoveDown(*m.board) {
 		if currentPiece.Moves() == 0 {
 			return tea.Quit
 		}
 	}
+
+	// if currentPiece.CanMoveDown(*m.board) {
+	// 	currentPiece.MoveDown()
+	// } else {
+	// 	// if the pieces just showed up and it can't move down, then the game is over.
+	// 	if currentPiece.Moves() == 0 {
+	// 		return tea.Quit
+	// 	}
+	// }
 
 	if cnt, ok := m.board.Emprint(*currentPiece); ok {
 		currentPiece = tetris.PickPiece(w)

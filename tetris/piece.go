@@ -1,7 +1,6 @@
 package tetris
 
 import (
-	"fmt"
 	"math/rand"
 )
 
@@ -162,8 +161,8 @@ func PickPiece(w int) *Piece {
 	rnd := rand.Intn(len(initialPieces))
 	picked := pieces[rnd]
 
-	p := cpPiece(picked)
-	p.move(0, w/2-1) // center the piece in the board.
+	p := picked.cp()
+	p.moveTo(0, w/2-1) // center the piece in the board.
 	return p
 }
 
@@ -191,9 +190,49 @@ func (p *Piece) CanMoveDown(b Board) bool {
 	return true
 }
 
-// CanMoveRight returns true if the piece can be moved right based on the
+func (p *Piece) TryMoveRight(b Board) bool {
+	if p.canMoveRight(b) {
+		p.moveRight()
+		return true
+	}
+
+	return false
+}
+
+func (p *Piece) TryMoveLeft(b Board) bool {
+	if p.canMoveLeft(b) {
+		p.moveLeft()
+		return true
+	}
+
+	return false
+}
+
+func (p *Piece) TryMoveDown(b Board) bool {
+	if p.CanMoveDown(b) {
+		p.moveDown()
+		return true
+	}
+
+	return false
+}
+
+// Rotate rotates the piece based on the current configuration of the board.
+func (p *Piece) Rotate(w int) *Piece {
+	if r, ok := ratations[p.id]; ok {
+		rr := pieces[r]
+		rotated := rr.cp()
+		rotated.moveTo(p.points[0].x, p.points[0].y)
+		rotated.bounds(w)
+		return rotated
+	}
+
+	return p
+}
+
+// canMoveRight returns true if the piece can be moved right based on the
 // curretn configuration of the board.
-func (p *Piece) CanMoveRight(b Board) bool {
+func (p *Piece) canMoveRight(b Board) bool {
 	for _, point := range p.points {
 		if !point.canMoveRight(b) {
 			return false
@@ -203,9 +242,9 @@ func (p *Piece) CanMoveRight(b Board) bool {
 	return true
 }
 
-// CanMoveLeft returns true if the piece can be moved left based on the
+// canMoveLeft returns true if the piece can be moved left based on the
 // current configuration of the board.
-func (p *Piece) CanMoveLeft(b Board) bool {
+func (p *Piece) canMoveLeft(b Board) bool {
 	for _, point := range p.points {
 		if !point.canMoveLeft(b) {
 			return false
@@ -215,23 +254,23 @@ func (p *Piece) CanMoveLeft(b Board) bool {
 	return true
 }
 
-// MoveDown moves the piece down.
-func (p *Piece) MoveDown() {
+// moveDown moves the piece down.
+func (p *Piece) moveDown() {
 	p.moves++
 	for _, point := range p.points {
 		point.x++
 	}
 }
 
-// MoveRight moves the piece right.
-func (p *Piece) MoveRight() {
+// moveRight moves the piece right.
+func (p *Piece) moveRight() {
 	for _, point := range p.points {
 		point.y++
 	}
 }
 
-// MoveLeft moves the piece left.
-func (p *Piece) MoveLeft() {
+// moveLeft moves the piece left.
+func (p *Piece) moveLeft() {
 	for _, point := range p.points {
 		point.y--
 	}
@@ -247,27 +286,7 @@ func (p *Piece) IsIn(point Point) bool {
 	return false
 }
 
-func (p *Piece) String() string {
-	var str string
-	for _, pp := range p.points {
-		str += fmt.Sprintf("(%d,%d) ", pp.x, pp.y)
-	}
-	return str
-}
-
-func (p *Piece) Rotate(w int) *Piece {
-	if r, ok := ratations[p.id]; ok {
-		rr := pieces[r]
-		rotated := cpPiece(rr)
-		rotated.move(p.points[0].x, p.points[0].y)
-		rotated.bounds(w)
-		return rotated
-	}
-
-	return p
-}
-
-func cpPiece(p Piece) *Piece {
+func (p *Piece) cp() *Piece {
 	cp := &Piece{id: p.id}
 	for _, pp := range p.points {
 		cp.points = append(cp.points, &Point{x: pp.x, y: pp.y})
@@ -276,7 +295,7 @@ func cpPiece(p Piece) *Piece {
 	return cp
 }
 
-func (p *Piece) move(x, y int) {
+func (p *Piece) moveTo(x, y int) {
 	for _, pp := range p.points {
 		pp.x += x
 		pp.y += y
@@ -291,12 +310,12 @@ func (p *Piece) bounds(w int) {
 		moves := false
 		for _, pp := range p.points {
 			if pp.y < 0 {
-				p.MoveRight()
+				p.moveRight()
 				moves = true
 				break
 			}
 			if pp.y >= w {
-				p.MoveLeft()
+				p.moveLeft()
 				moves = true
 				break
 			}

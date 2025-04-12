@@ -56,10 +56,14 @@ func (b *Board) removeFillRows() int {
 		}
 		if sum == len(b.m[i]) { // the entire row is filled.
 			b.m = append(b.m[:i], b.m[i+1:]...)
-			b.m = append([][]int{make([]int, b.w)}, b.m...)
 			i--
 			count++
 		}
 	}
+
+	for range count {
+		b.m = append([][]int{make([]int, b.w)}, b.m...)
+	}
+
 	return count
 }
