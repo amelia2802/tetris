@@ -218,7 +218,7 @@ func (m model) moveDown() tea.Cmd {
 		deletedScore := (10 * cnt) * (cnt + 1) / 2
 		score += deletedScore
 
-		level = score / 100
+		level = (score / 100) + 1
 
 		// 	tmp := level
 		// 	for l, v := range levels {
@@ -232,15 +232,4 @@ func (m model) moveDown() tea.Cmd {
 	speed = tetris.Speed(level)
 
 	return nil
-}
-
-var levels = map[int]int{
-	1: 0,
-	2: 100,
-	3: 200,
-	4: 300,
-	5: 400,
-	6: 500,
-	7: 600,
-	8: 700,
 }
