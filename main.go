@@ -217,13 +217,16 @@ func (m model) moveDown() tea.Cmd {
 
 		deletedScore := (10 * cnt) * (cnt + 1) / 2
 		score += deletedScore
-		tmp := level
-		for l, v := range levels {
-			if score > v {
-				tmp = l
-			}
-		}
-		level = tmp
+
+		level = score / 100
+
+		// 	tmp := level
+		// 	for l, v := range levels {
+		// 		if score > v {
+		// 			tmp = l
+		// 		}
+		// 	}
+		// 	level = tmp
 	}
 
 	speed = tetris.Speed(level)
