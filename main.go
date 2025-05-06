@@ -93,9 +93,10 @@ func (m model) View() string {
 		var row string
 		for j := range w {
 			if currentPiece.IsIn(tetris.MakePoint(i, j)) {
-				row += blockChar
+				row += currentPiece.GetColor() + blockChar + tetris.ColorReset
 			} else if m.board.At(i, j) == 1 {
-				row += blockChar
+				pieceColor := m.board.GetPieceColors()[i][j]
+				row += pieceColor +  blockChar + tetris.ColorReset
 			} else {
 				row += " "
 			}
