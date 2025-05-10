@@ -5,25 +5,26 @@ import (
 )
 
 const (
-    ColorReset  = "\033[0m"
-    ColorRed    = "\033[31m"
-    ColorGreen  = "\033[32m"
-    ColorYellow = "\033[33m"
-    ColorBlue   = "\033[34m"
-    ColorPurple = "\033[35m"
-    ColorCyan   = "\033[36m"
-    ColorWhite  = "\033[37m"
+	ColorReset  = "\033[0m"
+	ColorRed    = "\033[31m"
+	ColorGreen  = "\033[32m"
+	ColorYellow = "\033[33m"
+	ColorBlue   = "\033[34m"
+	ColorPurple = "\033[35m"
+	ColorCyan   = "\033[36m"
+	ColorWhite  = "\033[37m"
 )
 
+type Color string
 
-var pieceColors = []string{
-    ColorCyan,    
-    ColorYellow,  
-    ColorGreen,   
-    ColorRed,     
-    ColorBlue,    
-    ColorPurple,  
-    ColorWhite, 
+var pieceColors = []Color{
+	ColorCyan,
+	ColorYellow,
+	ColorGreen,
+	ColorRed,
+	ColorBlue,
+	ColorPurple,
+	ColorWhite,
 }
 
 var (
@@ -213,7 +214,7 @@ type Piece struct {
 	id     int
 	points []*Point
 	moves  int
-	color  string
+	color  Color
 }
 
 func (p *Piece) Moves() int {
@@ -296,6 +297,10 @@ func (p *Piece) canMoveLeft(b Board) bool {
 	return true
 }
 
+func (p *Piece) Color() string {
+	return string(p.color)
+}
+
 // moveDown moves the piece down.
 func (p *Piece) moveDown() {
 	p.moves++
@@ -330,7 +335,7 @@ func (p *Piece) IsIn(point Point) bool {
 
 func (p *Piece) cp() *Piece {
 	cp := &Piece{
-		id: p.id,
+		id:    p.id,
 		color: p.color,
 	}
 	for _, pp := range p.points {
@@ -369,8 +374,4 @@ func (p *Piece) bounds(w int) {
 			oob = false
 		}
 	}
-}
-
-func (p *Piece) GetColor() string {
-    return p.color
 }
