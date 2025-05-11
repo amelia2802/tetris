@@ -8,7 +8,7 @@ package tetris
 type Board struct {
 	m           [][]int
 	w, h        int
-	pieceColors [][]string
+	pieceColors [][]Color
 }
 
 // initBoard creates an empty board.
@@ -17,12 +17,12 @@ func NewBoard(w, h int) *Board {
 		m:           make([][]int, 0),
 		w:           w,
 		h:           h,
-		pieceColors: make([][]string, 0),
+		pieceColors: make([][]Color, 0),
 	}
 
 	for range h {
 		var row []int
-		var rowColors []string
+		var rowColors []Color
 		for range w {
 			row = append(row, 0)
 			rowColors = append(rowColors, "")
@@ -53,7 +53,7 @@ func (b *Board) Emprint(piece Piece) (int, bool) {
 	return rmCnt, true
 }
 
-func (b *Board) PieceColors() [][]string {
+func (b *Board) PieceColors() [][]Color {
 	return b.pieceColors
 }
 

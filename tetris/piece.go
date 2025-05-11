@@ -17,16 +17,6 @@ const (
 
 type Color string
 
-var pieceColors = []Color{
-	ColorCyan,
-	ColorYellow,
-	ColorGreen,
-	ColorRed,
-	ColorBlue,
-	ColorPurple,
-	ColorWhite,
-}
-
 var (
 	pieces = map[int]Piece{
 		0: {
@@ -36,55 +26,55 @@ var (
 			// |
 			// |
 			points: []*Point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}, {x: 3, y: 0}},
-			color:  pieceColors[0],
+			color:  ColorCyan,
 		},
 		1: {
 			id: 1,
 			// ----
 			points: []*Point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}},
-			color:  pieceColors[1],
+			color:  ColorBlue,
 		},
 		2: {
 			id: 2,
 			// --
 			// --
 			points: []*Point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}},
-			color:  pieceColors[2],
+			color:  ColorGreen,
 		},
 		3: {
 			id: 3,
 			//  --
 			// --
 			points: []*Point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}},
-			color:  pieceColors[3],
+			color:  ColorPurple,
 		},
 		4: {
 			id: 4,
 			//  -
 			// ---
 			points: []*Point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 1}},
-			color:  pieceColors[4],
+			color:  ColorRed,
 		},
 		5: {
 			id: 5,
 			// -
 			// ---
 			points: []*Point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 0}},
-			color:  pieceColors[5],
+			color:  ColorYellow,
 		},
 		6: {
 			id: 6,
 			//   -
 			// ---
 			points: []*Point{{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 2}},
-			color:  pieceColors[6],
+			color:  ColorWhite,
 		},
 		7: {
 			id: 7,
 			// --
 			//  --
 			points: []*Point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}},
-			color:  pieceColors[5],
+			color:  ColorYellow,
 		},
 		8: {
 			id: 8,
@@ -92,7 +82,7 @@ var (
 			// | |
 			//   |
 			points: []*Point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}},
-			color:  pieceColors[1],
+			color:  ColorCyan,
 		},
 		9: {
 			id: 9,
@@ -100,14 +90,14 @@ var (
 			// | |
 			// |
 			points: []*Point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 0}},
-			color:  pieceColors[2],
+			color:  ColorGreen,
 		},
 		10: {
 			id: 10,
 			// ---
 			//  -
 			points: []*Point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 1, y: 1}},
-			color:  pieceColors[3],
+			color:  ColorPurple,
 		},
 		11: {
 			id: 11,
@@ -115,7 +105,7 @@ var (
 			// ||
 			//  |
 			points: []*Point{{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}},
-			color:  pieceColors[4],
+			color:  ColorRed,
 		},
 		12: {
 			id: 12,
@@ -123,14 +113,14 @@ var (
 			// |
 			// |
 			points: []*Point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}, {x: 2, y: 0}},
-			color:  pieceColors[0],
+			color:  ColorCyan,
 		},
 		13: {
 			id: 13,
 			// ---
 			//   _
 			points: []*Point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 1, y: 2}},
-			color:  pieceColors[6],
+			color:  ColorWhite,
 		},
 		14: {
 			id: 14,
@@ -138,7 +128,7 @@ var (
 			//  |
 			// ||
 			points: []*Point{{x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 0}, {x: 2, y: 1}},
-			color:  pieceColors[1],
+			color:  ColorBlue,
 		},
 		15: {
 			id: 15,
@@ -146,14 +136,14 @@ var (
 			// |
 			// ||
 			points: []*Point{{x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}, {x: 2, y: 1}},
-			color:  pieceColors[2],
+			color:  ColorGreen,
 		},
 		16: {
 			id: 16,
 			// ---
 			// -
 			points: []*Point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 0, y: 2}, {x: 1, y: 0}},
-			color:  pieceColors[3],
+			color:  ColorPurple,
 		},
 
 		17: {
@@ -162,7 +152,7 @@ var (
 			//  |
 			//  |
 			points: []*Point{{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1}},
-			color:  pieceColors[4],
+			color:  ColorRed,
 		},
 		18: {
 			id: 18,
@@ -170,7 +160,7 @@ var (
 			// ||
 			// |
 			points: []*Point{{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 0}},
-			color:  pieceColors[0],
+			color:  ColorCyan,
 		},
 	}
 
@@ -297,8 +287,8 @@ func (p *Piece) canMoveLeft(b Board) bool {
 	return true
 }
 
-func (p *Piece) Color() string {
-	return string(p.color)
+func (p *Piece) Color() Color {
+	return p.color
 }
 
 // moveDown moves the piece down.
