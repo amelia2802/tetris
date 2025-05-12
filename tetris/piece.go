@@ -252,14 +252,15 @@ func (p *Piece) TryMoveDown(b Board) bool {
 
 // Rotate rotates the piece based on the current configuration of the board.
 func (p *Piece) Rotate(w int) *Piece {
+	color:= p.Color()
 	if r, ok := ratations[p.id]; ok {
 		rr := pieces[r]
 		rotated := rr.cp()
 		rotated.moveTo(p.points[0].x, p.points[0].y)
 		rotated.bounds(w)
+		rotated.color = color
 		return rotated
 	}
-
 	return p
 }
 
